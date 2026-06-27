@@ -1,0 +1,25 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class Merchant extends Model
+{
+    protected $table = 'merchants';
+
+    protected $fillable = [
+        'name',
+        'owner_id',
+    ];
+
+    public function members()
+    {
+        return $this->belongsToMany(
+            User::class,
+            'merchant_users'
+        )->withPivot('role')->withTimestamps();
+    }
+}
