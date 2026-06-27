@@ -32,6 +32,16 @@ class User extends Authenticatable
 
     public function merchants()
     {
-        return $this->hasMany(Merchant::class, 'owner_id');
+        return $this->belongsToMany(Merchant::class, 'merchant_users')
+        ->withPivot('role')
+        ->withTimestamps();
     }
+
+    public function hasMerchantRole(int $merchantId, string $role): bool
+{
+    return $this->merchants()
+        ->where('merchant_id', $merchantId)
+        ->wherePivot('role', $role)
+        ->exists();
+}
 }

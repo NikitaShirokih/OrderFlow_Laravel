@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreMerchantRequest;
 use App\Services\Merchant\MerchantService;
+use GuzzleHttp\Psr7\Request;
+use App\Models\Merchant;
+
 
 class MerchantController extends Controller
 {
@@ -11,6 +14,9 @@ class MerchantController extends Controller
         StoreMerchantRequest $request,
         MerchantService $service
     ) {
+
+        $this->authorize('create, Merchant::class');
+
         $merchant = $service->create(
             $request->user()->id,
             $request->validated()
@@ -21,4 +27,14 @@ class MerchantController extends Controller
             'name' => $merchant->name,
         ]);
     }
+    
+    public function index(Request $request, MerchantService $service)
+    {
+
+    $this->authorize('viewAny', Merchant::class);
+
+    return response()->json(
+        $service->listForUser($request->user()->id)
+    );
+}
 }

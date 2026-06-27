@@ -15,4 +15,11 @@ class MerchantService
             'owner_id' => $userId,
         ]);
     }
+
+    public function listForUser(int $userId)
+    {
+        return Merchant::query()
+        ->where('owner_id', $userId)
+        ->get();
+    }
 }
