@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Models;
+namespace App\Modules\Merchant\Domain\Models;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 
 class Merchant extends Model

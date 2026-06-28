@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Policies;
+namespace App\Modules\Merchant\Domain\Policies;
 
+use App\Modules\Merchant\Domain\Models\Merchant;
 use App\Models\User;
-use App\Models\Merchant;
 
 class MerchantPolicy
 {

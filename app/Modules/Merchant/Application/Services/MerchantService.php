@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Services\Merchant;
+namespace App\Modules\Merchant\Application\Services;
 
-use App\Models\Merchant;
+use App\Modules\Merchant\Domain\Models\Merchant;
 
 class MerchantService
 {

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Requests;
+namespace App\Modules\Merchant\Presentation\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 

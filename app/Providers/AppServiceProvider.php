@@ -2,11 +2,11 @@
 
 namespace App\Providers;
 
-use App\Models\Merchant;
-use App\Policies\MerchantPolicy;
+use App\Modules\Merchant\Domain\Models\Merchant;
+use App\Modules\Merchant\Domain\Policies\MerchantPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
-class AuthServiceProvider extends ServiceProvider
+class AppServiceProvider extends ServiceProvider
 {
     protected $policies = [
         Merchant::class => MerchantPolicy::class,
