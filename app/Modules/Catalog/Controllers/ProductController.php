@@ -11,17 +11,17 @@ use Illuminate\Http\Request;
 class ProductController extends Controller
 {
     public function store(Request $request, ProductService $service)
-{
-    $data = $request->validate([
-        'name' => 'required|string',
-        'sku' => 'required|string',
-    ]);
+    {
+        $data = $request->validate([
+            'name' => 'required|string',
+            'sku' => 'required|string',
+        ]);
 
-    return $service->create($data);
-}
+        return $service->create($data);
+    }
 
-public function index(ProductService $service)
-{
-    return $service->list();
-}
+    public function index(ProductService $service)
+    {
+        return $service->list();
+    }
 }

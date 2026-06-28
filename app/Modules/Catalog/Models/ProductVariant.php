@@ -8,29 +8,33 @@ use App\Modules\Merchant\Models\Merchant;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Product extends Model
+class ProductVariant extends Model
 {
     protected $fillable = [
+        'product_id',
         'merchant_id',
         'name',
         'sku',
-        'status',
+        'price',
+        'attributes',
     ];
 
     protected $casts = [
+        'product_id' => 'integer',
         'merchant_id' => 'integer',
+        'price' => 'decimal:2',
+        'attributes' => 'array',
     ];
+
+    public function product(): BelongsTo
+    {
+        return $this->belongsTo(Product::class);
+    }
 
     public function merchant(): BelongsTo
     {
         return $this->belongsTo(Merchant::class);
-    }
-
-    public function variants(): HasMany
-    {
-        return $this->hasMany(ProductVariant::class);
     }
 
     public function scopeForMerchant(Builder $query, int $merchantId): Builder

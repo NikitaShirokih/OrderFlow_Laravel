@@ -25,8 +25,7 @@ class ProductService
     {
         $merchant = app(ActiveMerchantContext::class)->get();
 
-        return Product::query()
-            ->forMerchant($merchant->id)
+        return Product::forMerchant($merchant->id)
             ->get()
             ->toArray();
     }
