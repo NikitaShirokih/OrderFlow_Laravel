@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Modules\Merchant\Domain\Policies;
+namespace App\Modules\Merchant\Policies;
 
-use App\Modules\Merchant\Domain\Models\Merchant;
+use App\Modules\Merchant\Models\Merchant;
 use App\Models\User;
 
 class MerchantPolicy

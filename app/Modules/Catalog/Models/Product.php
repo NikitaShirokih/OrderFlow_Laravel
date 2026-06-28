@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Modules\Catalog\Domain\Models;
+namespace App\Modules\Catalog\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -17,7 +17,7 @@ class Product extends Model
 
     public function merchant()
     {
-        return $this->belongsTo(\App\Modules\Merchant\Domain\Models\Merchant::class);
+        return $this->belongsTo(\App\Modules\Merchant\Models\Merchant::class);
     }
 
     public function scopeForMerchant($query, int $merchantId)

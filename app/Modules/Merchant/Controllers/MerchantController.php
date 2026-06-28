@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Modules\Merchant\Presentation\Http\Controllers;
+namespace App\Modules\Merchant\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Modules\Merchant\Application\Services\MerchantService;
-use App\Modules\Merchant\Domain\Models\Merchant;
-use App\Modules\Merchant\Presentation\Http\Requests\StoreMerchantRequest;
+use App\Modules\Merchant\Models\Merchant;
+use App\Modules\Merchant\Requests\StoreMerchantRequest;
+use App\Modules\Merchant\Services\MerchantService;
 use Illuminate\Http\Request;
 
 class MerchantController extends Controller
@@ -16,7 +16,10 @@ class MerchantController extends Controller
     ) {
         $this->authorize('create', Merchant::class);
 
-        $merchant = $service->create($request->validated());
+        $merchant = $service->create(
+            $request->user()->id,
+            $request->validated()
+        );
 
         return response()->json([
             'id' => $merchant->id,

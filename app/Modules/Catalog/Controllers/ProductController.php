@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Modules\Catalog\Presentation\Http\Controllers;
+namespace App\Modules\Catalog\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Modules\Catalog\Services\ProductService;
 use Illuminate\Http\Request;
-use App\Modules\Catalog\Application\Services\ProductService;
 
 class ProductController extends Controller
 {

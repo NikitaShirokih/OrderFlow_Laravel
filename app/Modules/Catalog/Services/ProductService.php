@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Modules\Catalog\Application\Services;
+namespace App\Modules\Catalog\Services;
 
-use App\Modules\Merchant\Application\Context\ActiveMerchantContext;
-use App\Modules\Catalog\Domain\Models\Product;
+use App\Modules\Catalog\Models\Product;
+use App\Modules\Merchant\Services\ActiveMerchantContext;
 
 class ProductService
 {

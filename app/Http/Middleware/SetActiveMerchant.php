@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Modules\Merchant\Services\ActiveMerchantContext;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,6 +16,12 @@ class SetActiveMerchant
      */
     public function handle(Request $request, Closure $next): Response
     {
+        $user = $request->user();
+
+        $merchant = $user->merchants()->first();
+
+        app(ActiveMerchantContext::class)->set($merchant);
+
         return $next($request);
     }
 }

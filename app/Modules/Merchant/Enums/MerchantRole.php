@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Modules\Merchant\Domain\Enums;
+namespace App\Modules\Merchant\Enums;
 
 enum MerchantRole: string
 {
