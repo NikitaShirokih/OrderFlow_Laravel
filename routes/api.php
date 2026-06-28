@@ -1,6 +1,11 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Modules\Admin\Controllers\AuditAdminController;
+use App\Modules\Admin\Controllers\NotificationsAdminController;
+use App\Modules\Admin\Controllers\OrdersAdminController;
+use App\Modules\Admin\Controllers\PaymentsAdminController;
+use App\Modules\Admin\Controllers\ProductsAdminController;
 use App\Modules\Catalog\Controllers\ProductVariantController;
 use App\Modules\Catalog\Controllers\StockController;
 use App\Modules\Merchant\Controllers\MerchantController;
@@ -20,4 +25,17 @@ Route::middleware('auth:sanctum', 'active.merchant')->group(function () {
     Route::post('/v1/orders/pay', [OrderController::class, 'pay']);
     Route::post('/v1/orders/cancel', [OrderController::class, 'cancel']);
     Route::post('/v1/payments/pay', [PaymentController::class, 'pay']);
+
+    Route::prefix('/v1/admin')->group(function () {
+        Route::get('/products', [ProductsAdminController::class, 'index']);
+        Route::get('/products/{product}', [ProductsAdminController::class, 'show']);
+        Route::get('/orders', [OrdersAdminController::class, 'index']);
+        Route::get('/orders/{order}', [OrdersAdminController::class, 'show']);
+        Route::post('/orders/{order}/cancel', [OrdersAdminController::class, 'cancel']);
+        Route::get('/payments', [PaymentsAdminController::class, 'index']);
+        Route::get('/payments/{payment}', [PaymentsAdminController::class, 'show']);
+        Route::get('/payments/{payment}/status', [PaymentsAdminController::class, 'status']);
+        Route::get('/audit-logs', [AuditAdminController::class, 'index']);
+        Route::get('/notifications', [NotificationsAdminController::class, 'index']);
+    });
 });

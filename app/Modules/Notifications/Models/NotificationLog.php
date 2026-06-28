@@ -2,24 +2,23 @@
 
 declare(strict_types=1);
 
-namespace App\Modules\Audit\Models;
+namespace App\Modules\Notifications\Models;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
-class AuditLog extends Model
+class NotificationLog extends Model
 {
     protected $fillable = [
         'merchant_id',
-        'event',
-        'entity_type',
-        'entity_id',
+        'type',
+        'email',
+        'status',
         'payload',
     ];
 
     protected $casts = [
         'merchant_id' => 'integer',
-        'entity_id' => 'integer',
         'payload' => 'array',
     ];
 

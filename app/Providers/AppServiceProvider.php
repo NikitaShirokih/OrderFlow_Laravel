@@ -13,6 +13,8 @@ use App\Modules\Orders\Events\OrderCreated;
 use App\Modules\Orders\Events\OrderPaid;
 use App\Modules\Orders\Events\OrderReserved;
 use App\Modules\Orders\Listeners\LogOrderEvent;
+use App\Modules\Notifications\Listeners\SendOrderNotification;
+use App\Modules\Notifications\Listeners\SendPaymentNotification;
 use App\Modules\Payments\Events\PaymentCreated;
 use App\Modules\Payments\Events\PaymentSucceeded;
 use App\Modules\Payments\Listeners\LogPaymentEvent;
@@ -38,8 +40,11 @@ class AppServiceProvider extends ServiceProvider
         Event::listen(OrderReserved::class, LogOrderEvent::class);
         Event::listen(OrderPaid::class, LogOrderEvent::class);
         Event::listen(OrderCanceled::class, LogOrderEvent::class);
+        Event::listen(OrderCreated::class, SendOrderNotification::class);
+        Event::listen(OrderPaid::class, SendOrderNotification::class);
         Event::listen(PaymentCreated::class, LogPaymentEvent::class);
         Event::listen(PaymentSucceeded::class, LogPaymentEvent::class);
+        Event::listen(PaymentSucceeded::class, SendPaymentNotification::class);
         Event::listen(StockReserved::class, LogStockEvent::class);
         Event::listen(StockReleased::class, LogStockEvent::class);
     }
