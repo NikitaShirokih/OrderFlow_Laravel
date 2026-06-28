@@ -5,8 +5,13 @@ declare(strict_types=1);
 namespace App\Modules\Orders\Services;
 
 use App\Modules\Catalog\Models\ProductVariant;
+use App\Modules\Catalog\DTO\ReleaseStockDTO;
+use App\Modules\Catalog\DTO\ReserveStockDTO;
 use App\Modules\Catalog\Services\StockService;
 use App\Modules\Merchant\Services\ActiveMerchantContext;
+use App\Modules\Orders\DTO\CancelOrderDTO;
+use App\Modules\Orders\DTO\CreateOrderDTO;
+use App\Modules\Orders\DTO\ReserveOrderDTO;
 use App\Modules\Orders\Enums\OrderStatus;
 use App\Modules\Orders\Events\OrderCanceled;
 use App\Modules\Orders\Events\OrderCreated;
@@ -22,11 +27,11 @@ class OrderService
     ) {
     }
 
-    public function create(array $items): Order
+    public function create(CreateOrderDTO $data): Order
     {
         $merchant = app(ActiveMerchantContext::class)->get();
 
-        return DB::transaction(function () use ($items, $merchant): Order {
+        return DB::transaction(function () use ($data, $merchant): Order {
             $order = Order::create([
                 'merchant_id' => $merchant->id,
                 'user_id' => null,
@@ -36,7 +41,7 @@ class OrderService
 
             $totalAmount = 0.0;
 
-            foreach ($items as $item) {
+            foreach ($data->items as $item) {
                 $quantity = (int) $item['quantity'];
                 $variant = ProductVariant::forMerchant($merchant->id)
                     ->findOrFail((int) $item['variant_id']);
@@ -63,15 +68,15 @@ class OrderService
         });
     }
 
-    public function reserveOrder(int $orderId): Order
+    public function reserveOrder(ReserveOrderDTO $data): Order
     {
         $merchant = app(ActiveMerchantContext::class)->get();
 
-        return DB::transaction(function () use ($merchant, $orderId): Order {
+        return DB::transaction(function () use ($data, $merchant): Order {
             $order = Order::forMerchant($merchant->id)
                 ->with('items')
                 ->lockForUpdate()
-                ->findOrFail($orderId);
+                ->findOrFail($data->orderId);
 
             if ($order->status !== OrderStatus::NEW) {
                 throw ValidationException::withMessages([
@@ -81,7 +86,7 @@ class OrderService
 
             foreach ($order->items as $item) {
                 ProductVariant::forMerchant($merchant->id)->findOrFail($item->product_variant_id);
-                $this->stockService->reserve($item->product_variant_id, $item->quantity);
+                $this->stockService->reserve(new ReserveStockDTO($item->product_variant_id, $item->quantity));
             }
 
             $order->update([
@@ -96,15 +101,15 @@ class OrderService
         });
     }
 
-    public function cancelOrder(int $orderId): Order
+    public function cancelOrder(CancelOrderDTO $data): Order
     {
         $merchant = app(ActiveMerchantContext::class)->get();
 
-        return DB::transaction(function () use ($merchant, $orderId): Order {
+        return DB::transaction(function () use ($data, $merchant): Order {
             $order = Order::forMerchant($merchant->id)
                 ->with('items')
                 ->lockForUpdate()
-                ->findOrFail($orderId);
+                ->findOrFail($data->orderId);
 
             if ($order->status === OrderStatus::PAID) {
                 throw ValidationException::withMessages([
@@ -121,7 +126,7 @@ class OrderService
             if ($order->status === OrderStatus::RESERVED) {
                 foreach ($order->items as $item) {
                     ProductVariant::forMerchant($merchant->id)->findOrFail($item->product_variant_id);
-                    $this->stockService->release($item->product_variant_id, $item->quantity);
+                    $this->stockService->release(new ReleaseStockDTO($item->product_variant_id, $item->quantity));
                 }
             }
 

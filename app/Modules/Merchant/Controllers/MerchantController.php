@@ -5,7 +5,9 @@ namespace App\Modules\Merchant\Controllers;
 use App\Http\Controllers\Controller;
 use App\Modules\Merchant\Models\Merchant;
 use App\Modules\Merchant\Requests\StoreMerchantRequest;
+use App\Modules\Merchant\Resources\MerchantResource;
 use App\Modules\Merchant\Services\MerchantService;
+use App\Shared\Http\ApiResponse;
 use Illuminate\Http\Request;
 
 class MerchantController extends Controller
@@ -21,10 +23,7 @@ class MerchantController extends Controller
             $request->validated()
         );
 
-        return response()->json([
-            'id' => $merchant->id,
-            'name' => $merchant->name,
-        ]);
+        return ApiResponse::success(new MerchantResource($merchant));
     }
 
     public function index(
@@ -33,8 +32,6 @@ class MerchantController extends Controller
     ) {
         $this->authorize('viewAny', Merchant::class);
 
-        return response()->json(
-            $service->listForUser($request->user()->id)
-        );
+        return ApiResponse::success(MerchantResource::collection($service->listForUser($request->user()->id)));
     }
 }

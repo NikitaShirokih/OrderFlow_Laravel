@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\Payments\Services;
 
 use App\Modules\Merchant\Services\ActiveMerchantContext;
+use App\Modules\Payments\DTO\PayOrderDTO;
 use App\Modules\Orders\Enums\OrderStatus;
 use App\Modules\Orders\Events\OrderPaid;
 use App\Modules\Orders\Models\Order;
@@ -17,11 +18,11 @@ use Illuminate\Validation\ValidationException;
 
 class PaymentService
 {
-    public function payByOrderId(int $orderId): Payment
+    public function payByOrderId(PayOrderDTO $data): Payment
     {
         $merchant = app(ActiveMerchantContext::class)->get();
 
-        $order = Order::forMerchant($merchant->id)->findOrFail($orderId);
+        $order = Order::forMerchant($merchant->id)->findOrFail($data->orderId);
 
         return $this->pay($order);
     }
