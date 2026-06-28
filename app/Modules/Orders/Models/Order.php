@@ -2,45 +2,37 @@
 
 declare(strict_types=1);
 
-namespace App\Modules\Catalog\Models;
+namespace App\Modules\Orders\Models;
 
 use App\Modules\Merchant\Models\Merchant;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class ProductVariant extends Model
+class Order extends Model
 {
     protected $fillable = [
-        'product_id',
         'merchant_id',
-        'name',
-        'sku',
-        'price',
-        'attributes',
+        'user_id',
+        'status',
+        'total_amount',
     ];
 
     protected $casts = [
-        'product_id' => 'integer',
         'merchant_id' => 'integer',
-        'price' => 'decimal:2',
-        'attributes' => 'array',
+        'user_id' => 'integer',
+        'total_amount' => 'decimal:2',
     ];
-
-    public function product(): BelongsTo
-    {
-        return $this->belongsTo(Product::class);
-    }
 
     public function merchant(): BelongsTo
     {
         return $this->belongsTo(Merchant::class);
     }
 
-    public function stock(): HasOne
+    public function items(): HasMany
     {
-        return $this->hasOne(Stock::class);
+        return $this->hasMany(OrderItem::class);
     }
 
     public function scopeForMerchant(Builder $query, int $merchantId): Builder
