@@ -6,8 +6,11 @@ namespace App\Modules\Payments\Services;
 
 use App\Modules\Merchant\Services\ActiveMerchantContext;
 use App\Modules\Orders\Enums\OrderStatus;
+use App\Modules\Orders\Events\OrderPaid;
 use App\Modules\Orders\Models\Order;
 use App\Modules\Payments\Enums\PaymentStatus;
+use App\Modules\Payments\Events\PaymentCreated;
+use App\Modules\Payments\Events\PaymentSucceeded;
 use App\Modules\Payments\Models\Payment;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
@@ -67,13 +70,17 @@ class PaymentService
                 ]);
             }
 
-            $payment ??= Payment::create([
-                'order_id' => $order->id,
-                'merchant_id' => $merchant->id,
-                'status' => PaymentStatus::PENDING,
-                'amount' => $order->total_amount,
-                'provider' => 'mock',
-            ]);
+            if (!$payment) {
+                $payment = Payment::create([
+                    'order_id' => $order->id,
+                    'merchant_id' => $merchant->id,
+                    'status' => PaymentStatus::PENDING,
+                    'amount' => $order->total_amount,
+                    'provider' => 'mock',
+                ]);
+
+                event(new PaymentCreated($payment->id, $order->id, $merchant->id));
+            }
 
             $payment->update([
                 'status' => PaymentStatus::SUCCEEDED,
@@ -83,7 +90,12 @@ class PaymentService
                 'status' => OrderStatus::PAID,
             ]);
 
-            return $payment->refresh()->load('order');
+            $payment = $payment->refresh()->load('order');
+
+            event(new PaymentSucceeded($payment->id, $order->id, $merchant->id));
+            event(new OrderPaid($order->id, $merchant->id));
+
+            return $payment;
         });
     }
 }

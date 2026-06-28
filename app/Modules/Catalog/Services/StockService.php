@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Modules\Catalog\Services;
 
+use App\Modules\Catalog\Events\StockReleased;
+use App\Modules\Catalog\Events\StockReserved;
 use App\Modules\Catalog\Models\ProductVariant;
 use App\Modules\Catalog\Models\Stock;
 use App\Modules\Merchant\Services\ActiveMerchantContext;
@@ -67,7 +69,11 @@ class StockService
                 'reserved' => $stock->reserved + $quantity,
             ]);
 
-            return $stock->refresh();
+            $stock = $stock->refresh();
+
+            event(new StockReserved($stock->id, $variant->id, $merchant->id, $quantity));
+
+            return $stock;
         });
     }
 
@@ -86,7 +92,11 @@ class StockService
                 'reserved' => max(0, $stock->reserved - $quantity),
             ]);
 
-            return $stock->refresh();
+            $stock = $stock->refresh();
+
+            event(new StockReleased($stock->id, $variant->id, $merchant->id, $quantity));
+
+            return $stock;
         });
     }
 }

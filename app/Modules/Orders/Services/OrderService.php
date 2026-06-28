@@ -8,6 +8,9 @@ use App\Modules\Catalog\Models\ProductVariant;
 use App\Modules\Catalog\Services\StockService;
 use App\Modules\Merchant\Services\ActiveMerchantContext;
 use App\Modules\Orders\Enums\OrderStatus;
+use App\Modules\Orders\Events\OrderCanceled;
+use App\Modules\Orders\Events\OrderCreated;
+use App\Modules\Orders\Events\OrderReserved;
 use App\Modules\Orders\Models\Order;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
@@ -52,7 +55,11 @@ class OrderService
                 'total_amount' => $totalAmount,
             ]);
 
-            return $order->load('items');
+            $order = $order->load('items');
+
+            event(new OrderCreated($order->id, $merchant->id));
+
+            return $order;
         });
     }
 
@@ -81,7 +88,11 @@ class OrderService
                 'status' => OrderStatus::RESERVED,
             ]);
 
-            return $order->refresh()->load('items');
+            $order = $order->refresh()->load('items');
+
+            event(new OrderReserved($order->id, $merchant->id));
+
+            return $order;
         });
     }
 
@@ -118,7 +129,11 @@ class OrderService
                 'status' => OrderStatus::CANCELED,
             ]);
 
-            return $order->refresh()->load('items');
+            $order = $order->refresh()->load('items');
+
+            event(new OrderCanceled($order->id, $merchant->id));
+
+            return $order;
         });
     }
 }
